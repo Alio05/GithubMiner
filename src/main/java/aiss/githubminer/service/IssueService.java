@@ -4,6 +4,7 @@ import aiss.githubminer.model.IssueData.IssueData;
 import aiss.githubminer.model.User;
 import aiss.githubminer.utils.RESTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 @Service
 public class IssueService {
+    @Value( "${github.token}" )
+    private String token;
     @Autowired
     CommentService commentService;
     IssueData data = new IssueData();
@@ -29,7 +32,7 @@ public class IssueService {
         String uri = baseUri + "/repos/" + owner + "/" + repo +
                 "/issues?state=all&page=1&since=" + date;
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer ");
+        headers.set("Authorization", "Bearer " + token);
                 HttpEntity <IssueData[]> request = new HttpEntity<>(null, headers);
         List<IssueData> issues = new ArrayList<>();
         int page = 1;

@@ -4,6 +4,7 @@ import aiss.githubminer.model.CommitData.Author;
 import aiss.githubminer.model.CommitData.Committer;
 import aiss.githubminer.utils.RESTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,8 @@ import java.util.List;
 
 @Service
 public class CommitService {
+    @Value( "${github.token}")
+    private String token;
     @Autowired
     RestTemplate restTemplate;
     final String baseUri = "https://api.github.com";
@@ -26,7 +29,7 @@ public class CommitService {
         String uri = baseUri + "/repos/" + owner + "/" + repo +
                 "/commits?page=1&since=" + date;
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " );
+        headers.set("Authorization", "Bearer " + token);
         HttpEntity<Commit[]> request = new HttpEntity<>(null, headers);
         ResponseEntity<Commit[]> response = restTemplate.exchange(uri,
                 HttpMethod.GET, request, Commit[].class);

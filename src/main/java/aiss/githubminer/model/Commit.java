@@ -41,97 +41,97 @@ public class Commit {
     private String committedDate;
     @JsonProperty("web_url")
     private String webUrl;
-    @JsonGetter("id")
+
     public String getId() {
         return id;
     }
-    @JsonProperty("id")
+
     public void setId(String id) {
         this.id = id;
     }
-    @JsonProperty("sha")
-    @JsonIgnore
+
+
     public String getSha() {
         return sha;
     }
-    @JsonProperty("sha")
+
     public void setSha(String sha) {
         this.sha = sha;
     }
-    @JsonProperty("title")
+
     public String getTitle() {
         return title;
     }
-    @JsonProperty("title")
+
     public void setTitle(String title) {
         this.title = title;
     }
-    @JsonProperty("message")
+
     public String getMessage() {
         return message;
     }
-    @JsonProperty("message")
+
     public void setMessage(String message) {
         this.message = message;
     }
-    @JsonProperty("author_name")
+
     public String getAuthorName() {
         return authorName;
     }
-    @JsonProperty("author_name")
+
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
-    @JsonProperty("author_email")
+
     public String getAuthorEmail() {
         return authorEmail;
     }
-    @JsonProperty("author_email")
+
     public void setAuthorEmail(String authorEmail) {
         this.authorEmail = authorEmail;
     }
-    @JsonProperty("authored_date")
+
     public String getAuthoredDate() {
         return authoredDate;
     }
-    @JsonProperty("authored_date")
+
     public void setAuthoredDate(String authoredDate) {
         this.authoredDate = authoredDate;
     }
-    @JsonProperty("committer_name")
+
     public String getCommitterName() {
         return committerName;
     }
-    @JsonProperty("committer_name")
+
     public void setCommitterName(String committerName) {
         this.committerName = committerName;
     }
-    @JsonProperty("committer_email")
+
     public String getCommitterEmail() {
         return committerEmail;
     }
-    @JsonProperty("committer_email")
+
     public void setCommitterEmail(String committerEmail) {
         this.committerEmail = committerEmail;
     }
-    @JsonProperty("committed_date")
+
     public String getCommittedDate() {
         return committedDate;
     }
-    @JsonProperty("committed_date")
+
     public void setCommittedDate(String committedDate) {
         this.committedDate = committedDate;
     }
-    @JsonProperty("web_url")
+
     public String getWebUrl() {
         return webUrl;
     }
-    @JsonProperty("web_url")
+
     public void setWebUrl(String webUrl) {
         this.webUrl = webUrl;
     }
-    @JsonProperty("commit")
-    @JsonIgnore
+
+
     public CommitProperty getCommit() {
         return commit;
     }
