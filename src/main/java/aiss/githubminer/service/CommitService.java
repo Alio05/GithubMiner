@@ -1,6 +1,7 @@
 package aiss.githubminer.service;
 import aiss.githubminer.model.Commit;
 import aiss.githubminer.model.CommitData.Author;
+import aiss.githubminer.model.CommitData.CommitProperty;
 import aiss.githubminer.model.CommitData.Committer;
 import aiss.githubminer.utils.RESTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,33 +49,32 @@ public class CommitService {
         }
         return commits;
     }
-    public void mapCommitValues(List<Commit> commits){
-        for(Commit commit: commits){
-            Author author = commit.getCommit().getAuthor();
-            Committer committer = commit.getCommit().getCommitter();
-            String id = commit.getSha();
-            String title = commit.getCommit().getMessage();
-            String authorName = author.getName();
-            String authorEmail = author.getEmail();
-            String authoredDate = author.getDate();
-            String committerName = committer.getName();
-            String committerEmail = committer.getEmail();
-            String committedDate = committer.getDate();
-            String webUrl = commit.getCommit().getUrl();
-            commit.setId(id);
-            if(title.length() < 20) {
-                commit.setTitle(title);
-            }else {
-                commit.setTitle(title.substring(0,20));
+    public void mapCommitValues(List<Commit> commits) {
+        for (Commit commit : commits) {
+            // Asegurar que commit y commit.getCommit() no sean nulos
+            if (commit.getCommit() == null) {
+                commit.setCommit(new CommitProperty());
             }
-            commit.setMessage(title);
-            commit.setAuthorName(authorName);
-            commit.setAuthorEmail(authorEmail);
-            commit.setAuthoredDate(authoredDate);
-            commit.setCommitterName(committerName);
-            commit.setCommitterEmail(committerEmail);
-            commit.setCommittedDate(committedDate);
-            commit.setWebUrl(webUrl);
+
+            CommitProperty commitProp = commit.getCommit();
+            Author author = commitProp.getAuthor() != null ? commitProp.getAuthor() : new Author();
+            Committer committer = commitProp.getCommitter() != null ? commitProp.getCommitter() : new Committer();
+
+            // Asignar valores con defaults para evitar nulls
+            commit.setId(commit.getSha() != null ? commit.getSha() : "no-id");
+            commit.setTitle(commitProp.getMessage() != null
+                    ? (commitProp.getMessage().length() < 20
+                    ? commitProp.getMessage()
+                    : commitProp.getMessage().substring(0, 20))
+                    : "No title");
+            commit.setMessage(commitProp.getMessage() != null ? commitProp.getMessage() : "No message");
+            commit.setAuthorName(author.getName() != null ? author.getName() : "Unknown");
+            commit.setAuthorEmail(author.getEmail() != null ? author.getEmail() : "No email");
+            commit.setAuthoredDate(author.getDate() != null ? author.getDate() : "No date");
+            commit.setCommitterName(committer.getName() != null ? committer.getName() : "Unknown");
+            commit.setCommitterEmail(committer.getEmail() != null ? committer.getEmail() : "No email");
+            commit.setCommittedDate(committer.getDate() != null ? committer.getDate() : "No date");
+            commit.setWebUrl(commit.getWebUrl() != null ? commit.getWebUrl() : "No URL"); // ¡GitHub devuelve "html_url", no "url"!
         }
     }
 }

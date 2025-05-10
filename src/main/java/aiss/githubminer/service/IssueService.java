@@ -1,6 +1,7 @@
 package aiss.githubminer.service;
 import aiss.githubminer.model.Issue;
 import aiss.githubminer.model.IssueData.IssueData;
+import aiss.githubminer.model.IssueData.Label;
 import aiss.githubminer.model.User;
 import aiss.githubminer.utils.RESTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,42 +30,69 @@ public class IssueService {
     @Autowired
     RestTemplate restTemplate;
     final String baseUri = "https://api.github.com";
-    public List<Issue> sinceIssues(String owner, String repo, Integer
-            days, Integer pages) {
+    public List<Issue> sinceIssues(String owner, String repo, Integer days, Integer pages) {
         LocalDate date = LocalDate.now().minusDays(days);
-        String uri = baseUri + "/repos/" + owner + "/" + repo +
-                "/issues?state=all&page=1&since=" + date;
+        String uri = baseUri + "/repos/" + owner + "/" + repo + "/issues?state=all&since=" + date;
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
-                HttpEntity <IssueData[]> request = new HttpEntity<>(null, headers);
+        HttpEntity<IssueData[]> request = new HttpEntity<>(null, headers);
         List<IssueData> issues = new ArrayList<>();
-        int page = 1;
-        while (page <= pages && uri != null) {
-            System.out.println(uri);
-            ResponseEntity<IssueData[]> response =
-                    restTemplate.exchange(uri, HttpMethod.GET, request, IssueData[].class);
-            List<IssueData> issuePage =
-                    Arrays.stream(response.getBody()).collect(Collectors.toList());
+        int pageCount = 0;
+
+        while (uri != null && pageCount < pages) {
+            ResponseEntity<IssueData[]> response = restTemplate.exchange(uri, HttpMethod.GET, request, IssueData[].class);
+            List<IssueData> issuePage = Arrays.stream(response.getBody()).collect(Collectors.toList());
             issues.addAll(issuePage);
-            uri = RESTUtil.getNextPageUrl(response.getHeaders());
-            page++;
+            uri = extractNextPageUrl(response.getHeaders());
+            pageCount++;
         }
+
         List<Issue> data = mapIssuesValues(issues);
-        data.forEach(x -> x.setComments(commentService.getNotes(owner,
-                repo, x.getRefId())));
-        mapAuthorValues(data);
+        data.forEach(x -> x.setComments(commentService.getNotes(owner, repo, x.getRefId())));
         return data;
     }
+    private String extractNextPageUrl(HttpHeaders headers) {
+        if (!headers.containsKey("Link")) return null;
+        String linksHeader = headers.getFirst("Link");
+        if (linksHeader == null) return null;
+
+        for (String link : linksHeader.split(", ")) {
+            if (link.contains("rel=\"next\"")) {
+                String url = link.split(";")[0].replaceAll("[<>]", "");
+                return URLDecoder.decode(url, StandardCharsets.UTF_8); // Decodifica el cursor
+            }
+        }
+        return null;
+    }
     public List<Issue> mapIssuesValues(List<IssueData> issues) {
-        List<Issue> data= new ArrayList<>();
-        List<String> labels = new ArrayList<>();
+        List<Issue> data = new ArrayList<>();
         for (IssueData issue : issues) {
-            Issue issue1 = new Issue(issue.getId(),
-                    issue.getNumber(),issue.getTitle(),issue.getBody(),issue.getState(),issue.getCreatedAt(),
-                    issue.getUpdatedAt(),issue.getClosedAt(),
-                    labels,issue.getUser(),issue.getAssignee(),issue.getReactions().getPlus1(),
-                    issue.getReactions().getMinous1(),issue.getHtmlUrl());
-            issue1.setLabels(issue.getLabels());
+            // Mapear labels correctamente
+            List<String> labels = issue.getLabels().stream()
+                    .map(Label::getName)
+                    .filter(name -> name != null && !name.isEmpty())
+                    .toList();
+
+            // Asignar valores por defecto
+            String title = issue.getTitle() != null ? issue.getTitle() : "No title";
+            String description = issue.getBody() != null ? issue.getBody() : "No description";
+
+            Issue issue1 = new Issue(
+                    issue.getId(),
+                    issue.getNumber(),
+                    title,
+                    description,
+                    issue.getState(),
+                    issue.getCreatedAt(),
+                    issue.getUpdatedAt(),
+                    issue.getClosedAt(),
+                    labels,
+                    issue.getUser(),
+                    issue.getAssignee(),
+                    issue.getReactions().getPlus1(),
+                    issue.getReactions().getMinous1(),
+                    issue.getHtmlUrl()
+            );
             data.add(issue1);
         }
         return data;

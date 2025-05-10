@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.*;
 })
 @Generated("jsonschema2pojo")
 public class Commit {
-    @JsonIgnore
     public CommitProperty commit;
     @JsonProperty("id")
     private String id;
@@ -76,7 +75,9 @@ public class Commit {
     }
 
     public String getAuthorName() {
-        return authorName;
+        return (commit != null && commit.getAuthor() != null)
+        ? commit.getAuthor().getName()
+        : this.authorName;
     }
 
     public void setAuthorName(String authorName) {

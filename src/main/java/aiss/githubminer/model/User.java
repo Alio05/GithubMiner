@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "id",
-        "username",
+        "login",
         "name",
         "avatar_url",
         "web_url"
@@ -19,7 +19,6 @@ public class User {
     @JsonProperty("username")
     private String username;
     @JsonProperty("login")
-    @JsonIgnore
     private String login;
     @JsonProperty("name")
     private String name;

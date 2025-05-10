@@ -32,6 +32,7 @@ public class GitHubController {
                                     sinceIssues, @RequestParam(defaultValue = "2", required = false) Integer maxPages){
         Project project= service.allData(owner,repo, sinceCommits,
                 sinceIssues, maxPages);
+        System.out.println("JSON enviado a GitMiner:\n" + project.toString());
 
         HttpEntity<Project> request = new HttpEntity<>(project);
         ResponseEntity<Project> response =

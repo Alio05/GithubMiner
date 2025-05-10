@@ -26,7 +26,6 @@ public class Project {
     @NotEmpty(message = "The web url of the project cannot be empty")
     private String webUrl;
     @JsonProperty("html_url")
-    @JsonIgnore
     @NotEmpty(message = "The web url of the project cannot be empty")
     private String htmlUrl;
     @JsonProperty("commits")

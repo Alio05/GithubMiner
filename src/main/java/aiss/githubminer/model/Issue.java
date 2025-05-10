@@ -1,6 +1,7 @@
 package aiss.githubminer.model;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import jakarta.annotation.Generated;
 import aiss.githubminer.model.Comment;
@@ -168,7 +169,9 @@ public class Issue {
         return labels;
     }
     public void setLabels(List<Label> labels) {
-        this.labels = labels.stream().map(x->x.getName()).toList();
+        this.labels = (labels != null)
+                ? labels.stream().map(Label::getName).filter(Objects::nonNull).toList()
+                : new ArrayList<>();
     }
     @Override
     public String toString() {

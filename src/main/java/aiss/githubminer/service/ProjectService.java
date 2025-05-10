@@ -1,5 +1,6 @@
 package aiss.githubminer.service;
 import aiss.githubminer.model.Project;
+import aiss.githubminer.etl.Transformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -13,6 +14,8 @@ import org.springframework.web.client.RestTemplate;
 public class ProjectService {
     @Value( "${github.token}")
     private String token;
+    @Autowired
+    private Transformer transformer;
     @Autowired
     RestTemplate restTemplate;
     @Autowired
@@ -31,11 +34,9 @@ public class ProjectService {
     }
     public Project allData(String owner, String repo, @RequestParam(required = false) Integer
             sinceCommits, @RequestParam(required = false) Integer sinceIssues,@RequestParam(required = false) Integer maxPages){
-        Project data = getProjectByOwnerAndName(owner,repo);
-        String webUrl = data.getHtmlUrl();
-        data.setCommits(commitService.sinceCommits(owner,repo,sinceCommits,maxPages));
-        data.setIssues(issueService.sinceIssues(owner,repo,sinceIssues,maxPages));
-        data.setWebUrl(webUrl);
-        return data;
+        Project github = getProjectByOwnerAndName(owner,repo);
+        github.setCommits(commitService.sinceCommits(owner,repo,sinceCommits,maxPages));
+        github.setIssues(issueService.sinceIssues(owner,repo,sinceIssues,maxPages));
+        return transformer.transform(github);
     }
 }
