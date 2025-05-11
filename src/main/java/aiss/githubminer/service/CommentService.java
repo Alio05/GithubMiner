@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 @Service
 public class CommentService {
-    @Value( "${github.token}")
+    @Value( "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")
     private String token;
     @Autowired
     RestTemplate restTemplate;

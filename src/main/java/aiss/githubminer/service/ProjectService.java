@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 @Service
 public class ProjectService {
-    @Value( "${github.token}")
+    @Value( "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")
     private String token;
     @Autowired
     private Transformer transformer;
