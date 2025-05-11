@@ -48,6 +48,7 @@ public class IssueService {
         }
 
         List<Issue> data = mapIssuesValues(issues);
+        mapAuthorValues(data);
         data.forEach(x -> x.setComments(commentService.getNotes(owner, repo, x.getRefId())));
         return data;
     }
@@ -59,7 +60,7 @@ public class IssueService {
         for (String link : linksHeader.split(", ")) {
             if (link.contains("rel=\"next\"")) {
                 String url = link.split(";")[0].replaceAll("[<>]", "");
-                return URLDecoder.decode(url, StandardCharsets.UTF_8); // Decodifica el cursor
+                return URLDecoder.decode(url, StandardCharsets.UTF_8);
             }
         }
         return null;
@@ -67,16 +68,15 @@ public class IssueService {
     public List<Issue> mapIssuesValues(List<IssueData> issues) {
         List<Issue> data = new ArrayList<>();
         for (IssueData issue : issues) {
-            // Mapear labels correctamente
             List<String> labels = issue.getLabels().stream()
                     .map(Label::getName)
                     .filter(name -> name != null && !name.isEmpty())
                     .toList();
 
-            // Asignar valores por defecto
             String title = issue.getTitle() != null ? issue.getTitle() : "No title";
             String description = issue.getBody() != null ? issue.getBody() : "No description";
-
+            Integer upvotes = issue.getReactions().getPlus1() != null ? issue.getReactions().getPlus1() : 0;
+            Integer downvotes = issue.getReactions().getMinous1() != null ? issue.getReactions().getMinous1() : 0;
             Issue issue1 = new Issue(
                     issue.getId(),
                     issue.getNumber(),
@@ -89,8 +89,8 @@ public class IssueService {
                     labels,
                     issue.getUser(),
                     issue.getAssignee(),
-                    issue.getReactions().getPlus1(),
-                    issue.getReactions().getMinous1(),
+                    upvotes,
+                    downvotes,
                     issue.getHtmlUrl()
             );
             data.add(issue1);
@@ -100,13 +100,17 @@ public class IssueService {
     public void mapAuthorValues(List<Issue> issues) {
         for (Issue issue: issues) {
         User commentAuthor = issue.getAuthor();
-        String commentAuthorUserName = commentAuthor.getLogin();
-        String commentAuthorName = commentAuthor.getLogin();
-        String commentAuthorWebUrl = commentAuthor.getHtmlUrl();
         issue.setAuthor(commentAuthor);
-        commentAuthor.setUsername(commentAuthorUserName);
-        commentAuthor.setName(commentAuthorName);
-        commentAuthor.setWebUrl(commentAuthorWebUrl);
+        commentAuthor.setUsername(commentAuthor.getLogin());
+        commentAuthor.setName(commentAuthor.getName());
+        commentAuthor.setWebUrl(commentAuthor.getHtmlUrl());
+        if (issue.getAssignee() != null) {
+            User assignee = issue.getAssignee();
+            issue.setAssignee(assignee);
+            assignee.setUsername(assignee.getLogin());
+            assignee.setName(assignee.getName());
+            assignee.setWebUrl(assignee.getHtmlUrl());
+        }
         }
     }
 }

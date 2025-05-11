@@ -43,7 +43,7 @@ public class Issue {
     private String createdAt;
     @JsonProperty("updated_at")
     private String updatedAt;
-    @JsonProperty("closed_At")
+    @JsonProperty("closed_at")
     private String closedAt;
     @JsonProperty("author")
     private User author;
@@ -53,7 +53,7 @@ public class Issue {
     private Integer upvotes;
     @JsonProperty("downvotes")
     private Integer downvotes;
-    @JsonProperty("web_url")
+    @JsonProperty("html_url")
     private String webUrl;
     @JsonProperty("comments")
     private List<Comment> comments;

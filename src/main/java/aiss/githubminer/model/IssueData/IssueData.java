@@ -20,7 +20,7 @@ import java.util.List;
         "assignee",
         "upvotes",
         "downvotes",
-        "web_url",
+        "html_url",
         "comments"
 })
 public class IssueData {

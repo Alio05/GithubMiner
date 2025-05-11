@@ -39,7 +39,7 @@ public class CommentService {
             if (comment != null) {
                 User commentAuthor = comment.getUser();
                 String commentAuthorUserName = commentAuthor.getLogin();
-                String commentAuthorName = commentAuthor.getLogin();
+                String commentAuthorName = commentAuthor.getName();
                 String commentAuthorWebUrl = commentAuthor.getHtmlUrl();
                 comment.setAuthor(commentAuthor);
                 commentAuthor.setUsername(commentAuthorUserName);

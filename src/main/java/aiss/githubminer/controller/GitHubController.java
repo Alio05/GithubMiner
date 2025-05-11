@@ -26,17 +26,16 @@ public class GitHubController {
                 maxPages);
     }
     @PostMapping("/{owner}/{repo}")
-    public Project sendData(@PathVariable String owner,@PathVariable
+    public ResponseEntity<Project> sendData(@PathVariable String owner,@PathVariable
                             String repo, @RequestParam(defaultValue = "5") Integer sinceCommits,
                             @RequestParam(defaultValue = "20") Integer
                                     sinceIssues, @RequestParam(defaultValue = "2") Integer maxPages){
         Project project= service.allData(owner,repo, sinceCommits,
                 sinceIssues, maxPages);
-
         HttpEntity<Project> request = new HttpEntity<>(project);
         ResponseEntity<Project> response =
                 restTemplate.exchange(gitMinerUri, HttpMethod.POST,request,
                         Project.class);
-        return response.getBody();
+        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
     }
 }

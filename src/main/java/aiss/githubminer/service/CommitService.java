@@ -51,7 +51,7 @@ public class CommitService {
     }
     public void mapCommitValues(List<Commit> commits) {
         for (Commit commit : commits) {
-            // Asegurar que commit y commit.getCommit() no sean nulos
+
             if (commit.getCommit() == null) {
                 commit.setCommit(new CommitProperty());
             }
@@ -60,7 +60,7 @@ public class CommitService {
             Author author = commitProp.getAuthor() != null ? commitProp.getAuthor() : new Author();
             Committer committer = commitProp.getCommitter() != null ? commitProp.getCommitter() : new Committer();
 
-            // Asignar valores con defaults para evitar nulls
+
             commit.setId(commit.getSha() != null ? commit.getSha() : "no-id");
             commit.setTitle(commitProp.getMessage() != null
                     ? (commitProp.getMessage().length() < 20
@@ -74,7 +74,7 @@ public class CommitService {
             commit.setCommitterName(committer.getName() != null ? committer.getName() : "Unknown");
             commit.setCommitterEmail(committer.getEmail() != null ? committer.getEmail() : "No email");
             commit.setCommittedDate(committer.getDate() != null ? committer.getDate() : "No date");
-            commit.setWebUrl(commit.getWebUrl() != null ? commit.getWebUrl() : "No URL"); // ¡GitHub devuelve "html_url", no "url"!
+            commit.setWebUrl(commitProp.getUrl() != null ? commitProp.getUrl() : "No URL");
         }
     }
 }

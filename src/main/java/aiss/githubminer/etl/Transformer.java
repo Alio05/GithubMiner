@@ -3,6 +3,7 @@ package aiss.githubminer.etl;
 import aiss.githubminer.model.Commit;
 import aiss.githubminer.model.Issue;
 import aiss.githubminer.model.Project;
+import aiss.githubminer.model.User;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,19 +17,12 @@ public class Transformer {
         gitMinerProject.setId(github.getId());
         gitMinerProject.setName(github.getName());
         gitMinerProject.setWebUrl(github.getHtmlUrl());
-
-        List<Commit> validCommits = github.getCommits().stream()
-                .filter(commit ->
-                        commit.getId() != null &&
-                                !commit.getId().equals("no-id") &&
-                                commit.getTitle() != null
-                )
-                .toList();
-        github.getIssues().forEach(issue -> {if (issue.getAuthor() != null && issue.getAuthor().getUsername() == null) {
-            issue.getAuthor().setUsername(issue.getAuthor().getLogin());
-        }
-        });
         List<Issue> validIssues = github.getIssues().stream()
+                .map(issue -> {
+                    issue.setAuthor(transformUser(issue.getAuthor()));
+                    issue.setAssignee(transformUser(issue.getAssignee()));
+                    return issue;
+                })
                 .filter(issue ->
                         issue.getTitle() != null &&
                                 !issue.getTitle().isEmpty() &&
@@ -40,9 +34,17 @@ public class Transformer {
 
         return gitMinerProject;
     }
-    private Commit transformCommit(Commit github){
-        Commit gitMinerCommit = new Commit();
-        gitMinerCommit.setId(github.getSha());
-        return gitMinerCommit;
+    private User transformUser(User githubUser) {
+        if (githubUser == null) return null;
+
+        User gitMinerUser = new User();
+        gitMinerUser.setUsername(
+                githubUser.getUsername() != null
+                        ? githubUser.getUsername()
+                        : "default"
+        );
+        gitMinerUser.setAvatarUrl(githubUser.getAvatarUrl());
+        gitMinerUser.setWebUrl(githubUser.getHtmlUrl());
+        return gitMinerUser;
     }
 }

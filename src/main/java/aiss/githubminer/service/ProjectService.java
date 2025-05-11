@@ -35,8 +35,9 @@ public class ProjectService {
     public Project allData(String owner, String repo, @RequestParam(required = false) Integer
             sinceCommits, @RequestParam(required = false) Integer sinceIssues,@RequestParam(required = false) Integer maxPages){
         Project github = getProjectByOwnerAndName(owner,repo);
-        github.setCommits(commitService.sinceCommits(owner,repo,sinceCommits,maxPages));
-        github.setIssues(issueService.sinceIssues(owner,repo,sinceIssues,maxPages));
-        return transformer.transform(github);
+        Project correctedGithub = transformer.transform(github);
+        correctedGithub.setIssues(issueService.sinceIssues(owner,repo,sinceIssues,maxPages));
+        correctedGithub.setCommits(commitService.sinceCommits(owner,repo,sinceCommits,maxPages));
+        return correctedGithub;
     }
 }
