@@ -1,4 +1,4 @@
-package aiss.githubminer;
+package aiss.githubminer.model;
 
 import aiss.githubminer.model.Project;
 import aiss.githubminer.model.Commit;
@@ -6,8 +6,6 @@ import aiss.githubminer.model.Issue;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
-
-
 
 class ProjectTest {
 

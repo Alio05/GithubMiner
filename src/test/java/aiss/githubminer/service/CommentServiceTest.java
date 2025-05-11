@@ -1,4 +1,4 @@
-package aiss.githubminer;
+package aiss.githubminer.service;
 
 import aiss.githubminer.model.Comment;
 import aiss.githubminer.model.User;

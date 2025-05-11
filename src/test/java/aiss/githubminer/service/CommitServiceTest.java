@@ -1,4 +1,4 @@
-package aiss.githubminer;
+package aiss.githubminer.service;
 
 import aiss.githubminer.model.Commit;
 import aiss.githubminer.model.CommitData.Author;
