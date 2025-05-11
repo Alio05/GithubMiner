@@ -19,7 +19,7 @@ import java.util.List;
 
 @Service
 public class CommitService {
-    @Value( "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")
+    @Value( "${github.token}")
     private String token;
     @Autowired
     RestTemplate restTemplate;
